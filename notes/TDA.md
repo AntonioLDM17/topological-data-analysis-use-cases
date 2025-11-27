@@ -8,6 +8,74 @@ Topological data analysis (TDA) is an approach to the analysis of datasets using
 
 - Geometric topology is the study of manifolds and maps between them, particularly embeddings of one manifold into another.
 
+## **Persistent Homology**
+
+The main tool of TDA is persistent homology, an adaptation of homology to point cloud data.
+
+TDA is premised on the idea that the shape of data sets contains relevant information. Real high-dimensional data is typically inherently sparse (independently of sampling effects), and tends to have relevant low dimensional features. One task of TDA is to provide a precise characterization of this fact.
+
+Many algorithms for data analysis, including those used in TDA, require setting various parameters. Without prior domain knowledge, the correct collection of parameters for a data set is difficult to choose.
+
+> \[!NOTE]
+>In the context of TDA (specifically *persistent homology*) **the parameter** refers to the **scale parameter** (or *filtration value*) used to build a family of topological spaces.
+
+The main insight of persistent homology is to use the information obtained from all parameter values by encoding this huge amount of information into an understandable and easy-to-represent form. With TDA, there is a mathematical interpretation when the information is a homology group. In general, the assumption is that features that persist for a wide range of parameters are "true" features. Features persisting for only a narrow range of parameters are presumed to be noise, although the theoretical justification for this is unclear.
+
+### **What does Persistent Homology provide?**
+
+**At the topological level:**
+
+Persistent Homology captures the informally called features, concretelly, these are **topological invariants describing the shape of the data**, each corresponding to the presence of a hole whose **boundary has a specific intrinsic dimension**. In other words:
+
+> A *feature* in persistent homology is a topological hole whose intrinsic dimensionality equals the dimension of the manifold that bounds it (regardless of the ambient dimension where the data lives).
+
+In algebraic topology:
+
+- A 0-dimensional feature is a connected component (a set of points distributed around one centroid: dimension 0)
+- A 1-dimensional feature is a hole bounded by a loop (a set of points distributed around a closed curve: dimension 1)
+- A 2-dimensional feature is a void (a bubble) (a set of points distributed around a hollow sphere-like cavity: bounded by a 2D surface)
+
+Finding these topological features within the data set requires building candidate point agrupations and "testing" their fitness. Concretely, this agrupations are taken as the sublevel family of complexes obtained by thickening the data at scale $r$. In plain words, merging into the same agrupation pairs of points with a nonempty intersection of the $r$-balls built around them.
+
+> The scale ($r$) is the radius of the balls artificially placed around each data point.
+
+The *persistent* qualifiyer in *Persistent Homology* means that it does not study topology at a single scale; instead it studies how the topology of the data changes as we the scale is continuously varied, and it keeps only the features that survive for a long range of scales.
+
+> The *scale* controls the spatial resolution at which the data is probed by thickening the points.
+
+It's exactly like zooming in and out:
+
+- At very fine resolution $\to$ lots of details, noise
+- At very coarse resolution $\to$ only the big structure remains
+
+**At the practical level:**
+
+This features are encoded into visualy representable mathematical artifacts. Mainly persistence barcodes and persistence diagrams.
+
+- **persistence barcode**: multiset of intervals in $\mathbb{R}$
+
+- **persistence diagram**: multiset of points in $\Delta := {(u,v) \in \mathbb{R}^2 \mid u,v \ge 0,\ u \le v}$.
+
+## **Relevant Simplicial Complexes**
+
+**Simplicial Complex**
+
+In mathematics, a simplicial complex is a structured set of simplices (for example, points, line segments, triangles, and their n-dimensional counterparts) such that all the faces and intersections of the elements are also included in the set (see illustration).
+
+[Wikipedia Image]
+
+**Vietoris-Rips Complex**
+
+In topology, the **Vietoris–Rips complex**, also called the **Vietoris complex** or **Rips complex**, is a way of forming a topological space from distances in a set of points. It is an abstract simplicial complex that can be defined from any metric space $M$ and distance $\delta$ by forming a simplex for every finite set of points that has diameter at most $\delta$. That is, it is a family of finite subsets of $M$, in which we think of a subset of $k$ points as forming a $(k-1)$-dimensional simplex (an edge for two points, a triangle for three points, a tetrahedron for four points, etc.). If a finite set $S$ has the property that the distance between every pair of points in $S$ is at most $\delta$, then we include $S$ as a simplex in the complex.
+
+**Čech Complex**
+
+In algebraic topology and topological data analysis, the Čech complex is an abstract simplicial complex constructed from a point cloud in any metric space which is meant to capture topological information about the point cloud or the distribution it is drawn from. Given a finite point cloud $X$ and an $\varepsilon > 0$, we construct the Čech complex $\check{C}_\varepsilon(X)$ as follows: Take the elements of $X$ as the vertex set of $\check{C}*\varepsilon(X)$. Then, for each $\sigma \subset X$, let $\sigma \in \check{C}*\varepsilon(X)$ if the set of $\varepsilon$-balls centered at points of $\sigma$ has a nonempty intersection. In other words, the Čech complex is the nerve of the set of $\varepsilon$-balls centered at points of $X$. By the nerve lemma, the Čech complex is homotopy equivalent to the union of the balls, also known as the offset filtration.
+
+[Wikipedia Image]
+
+The Čech complex is a subcomplex of the Vietoris-Rips complex. While the Čech complex is more computationally expensive than the Vietoris–Rips complex, since we must check for higher order intersections of the balls in the complex, the nerve theorem provides a guarantee that the Čech complex is homotopy equivalent to union of the balls in the complex. The Vietoris-Rips complex may not be.
+
 ---
 
 ## **Instrumental Constructs**
@@ -109,71 +177,3 @@ where:
 - $D$ is the map taking a continuous tame function to the persistence diagram of its $k$-th homology.
 
 ---
-
-## **Persistent Homology**
-
-The main tool of TDA is persistent homology, an adaptation of homology to point cloud data.
-
-TDA is premised on the idea that the shape of data sets contains relevant information. Real high-dimensional data is typically inherently sparse (independently of sampling effects), and tends to have relevant low dimensional features. One task of TDA is to provide a precise characterization of this fact.
-
-Many algorithms for data analysis, including those used in TDA, require setting various parameters. Without prior domain knowledge, the correct collection of parameters for a data set is difficult to choose.
-
-> \[!NOTE]
->In the context of TDA (specifically *persistent homology*) **the parameter** refers to the **scale parameter** (or *filtration value*) used to build a family of topological spaces.
-
-The main insight of persistent homology is to use the information obtained from all parameter values by encoding this huge amount of information into an understandable and easy-to-represent form. With TDA, there is a mathematical interpretation when the information is a homology group. In general, the assumption is that features that persist for a wide range of parameters are "true" features. Features persisting for only a narrow range of parameters are presumed to be noise, although the theoretical justification for this is unclear.
-
-### **What does Persistent Homology provide?**
-
-**At the topological level:**
-
-Persistent Homology captures the informally called features, concretelly, these are **topological invariants describing the shape of the data**, each corresponding to the presence of a hole whose **boundary has a specific intrinsic dimension**. In other words:
-
-> A *feature* in persistent homology is a topological hole whose intrinsic dimensionality equals the dimension of the manifold that bounds it (regardless of the ambient dimension where the data lives).
-
-In algebraic topology:
-
-- A 0-dimensional feature is a connected component (a set of points distributed around one centroid: dimension 0)
-- A 1-dimensional feature is a hole bounded by a loop (a set of points distributed around a closed curve: dimension 1)
-- A 2-dimensional feature is a void (a bubble) (a set of points distributed around a hollow sphere-like cavity: bounded by a 2D surface)
-
-Finding these topological features within the data set requires building candidate point agrupations and "testing" their fitness. Concretely, this agrupations are taken as the sublevel family of complexes obtained by thickening the data at scale $r$. In plain words, merging into the same agrupation pairs of points with a nonempty intersection of the $r$-balls built around them.
-
-> The scale ($r$) is the radius of the balls artificially placed around each data point.
-
-The *persistent* qualifiyer in *Persistent Homology* means that it does not study topology at a single scale; instead it studies how the topology of the data changes as we the scale is continuously varied, and it keeps only the features that survive for a long range of scales.
-
-> The *scale* controls the spatial resolution at which the data is probed by thickening the points.
-
-It's exactly like zooming in and out:
-
-- At very fine resolution $\to$ lots of details, noise
-- At very coarse resolution $\to$ only the big structure remains
-
-**At the practical level:**
-
-This features are encoded into visualy representable mathematical artifacts. Mainly persistence barcodes and persistence diagrams.
-
-- **persistence barcode**: multiset of intervals in $\mathbb{R}$
-
-- **persistence diagram**: multiset of points in $\Delta := {(u,v) \in \mathbb{R}^2 \mid u,v \ge 0,\ u \le v}$.
-
-## **Relevant Simplicial Complexes**
-
-**Simplicial Complex**
-
-In mathematics, a simplicial complex is a structured set of simplices (for example, points, line segments, triangles, and their n-dimensional counterparts) such that all the faces and intersections of the elements are also included in the set (see illustration).
-
-[Wikipedia Image]
-
-**Vietoris-Rips Complex**
-
-In topology, the **Vietoris–Rips complex**, also called the **Vietoris complex** or **Rips complex**, is a way of forming a topological space from distances in a set of points. It is an abstract simplicial complex that can be defined from any metric space $M$ and distance $\delta$ by forming a simplex for every finite set of points that has diameter at most $\delta$. That is, it is a family of finite subsets of $M$, in which we think of a subset of $k$ points as forming a $(k-1)$-dimensional simplex (an edge for two points, a triangle for three points, a tetrahedron for four points, etc.). If a finite set $S$ has the property that the distance between every pair of points in $S$ is at most $\delta$, then we include $S$ as a simplex in the complex.
-
-**Čech Complex**
-
-In algebraic topology and topological data analysis, the Čech complex is an abstract simplicial complex constructed from a point cloud in any metric space which is meant to capture topological information about the point cloud or the distribution it is drawn from. Given a finite point cloud $X$ and an $\varepsilon > 0$, we construct the Čech complex $\check{C}_\varepsilon(X)$ as follows: Take the elements of $X$ as the vertex set of $\check{C}*\varepsilon(X)$. Then, for each $\sigma \subset X$, let $\sigma \in \check{C}*\varepsilon(X)$ if the set of $\varepsilon$-balls centered at points of $\sigma$ has a nonempty intersection. In other words, the Čech complex is the nerve of the set of $\varepsilon$-balls centered at points of $X$. By the nerve lemma, the Čech complex is homotopy equivalent to the union of the balls, also known as the offset filtration.
-
-[Wikipedia Image]
-
-The Čech complex is a subcomplex of the Vietoris-Rips complex. While the Čech complex is more computationally expensive than the Vietoris–Rips complex, since we must check for higher order intersections of the balls in the complex, the nerve theorem provides a guarantee that the Čech complex is homotopy equivalent to union of the balls in the complex. The Vietoris-Rips complex may not be.
