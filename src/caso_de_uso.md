@@ -12,6 +12,8 @@ El objetivo es mostrar, de forma visual y cuantitativa, cómo la **estructura to
 - **Homología persistente en H₀ y H₁**
 - **Diagramas de persistencia**
 
+Este caso de uso sirve como **complemento práctico** al README teórico de TDA del proyecto, donde se introducen de forma abstracta conceptos como complejos simpliciales, módulos persistentes, barcodes y diagramas de persistencia. Aquí esos conceptos se materializan sobre un problema biomédico concreto.
+
 ---
 
 ## 1. Resumen del pipeline
@@ -22,7 +24,7 @@ El script `tda_timeseries.py` hace lo siguiente:
    - `16265` del dataset **NSRDB** (normal)
    - `100` del dataset **MITDB** (arrítmico)
 
-2. **Remuestrea** las señales a una frecuencia objetivo (por defecto 128 Hz) para que ambas sean comparables.
+2. **Remuestrea** las señales a una frecuencia objetivo (por defecto 128 Hz o 30 Hz, según configuración) para que ambas sean comparables.
 
 3. Para cada registro:
    - Corta un **segmento de 30 segundos**.
@@ -313,7 +315,7 @@ En un escenario ideal:
 
 ---
 
-## 5. Teoría topológica detrás del caso de uso (explicada con calma)
+## 5. Teoría topológica detrás del caso de uso
 
 ### 5.1. De una serie temporal a una nube de puntos
 
@@ -414,16 +416,37 @@ Por eso, la **persistencia máxima en H₁** se usa como:
 
 ---
 
-## 6. Relación con el paper original y su repositorio
+## 6. Relación con el README teórico de TDA del proyecto
+
+El README general de TDA del proyecto introduce, de forma abstracta, los conceptos de:
+
+* **Homología persistente** y módulos de persistencia
+* **Complejos de Čech y Vietoris–Rips**
+* **Features topológicas** (componentes, ciclos, vacíos) en H₀, H₁, H₂
+* **Barcodes y diagramas de persistencia**
+* Nociones de **estabilidad** y distancias (Wasserstein, bottleneck)
+
+Este repositorio implementa un ejemplo concreto donde todos esos conceptos se materializan:
+
+* El ECG, tras el **sliding window embedding**, se convierte en un **point cloud** sobre el que construimos un **Vietoris–Rips complex**, tal y como se describe en la parte teórica.
+* La **filtración** de ese complejo genera los grupos de homología en distintas escalas; sus generadores se codifican en **diagramas de persistencia**, exactamente como en la definición general de persistent homology.
+* Los **0-ciclos (H₀)** se interpretan como componentes del embedding, mientras que los **1-ciclos (H₁)** se interpretan aquí como la **estructura de bucle asociada a la periodicidad cardiaca**.
+* El principio “**features persistentes = estructura real, features cortas = ruido**”, explicado en el README teórico, se verifica empíricamente: el ECG normal presenta un ciclo H₁ más persistente que el arrítmico.
+
+En otras palabras, **este caso de uso funciona como una demostración aplicada de la teoría desarrollada en el README de TDA**: todo el formalismo abstracto se traduce en una herramienta concreta para comparar latidos sanos y patológicos.
+
+---
+
+## 7. Relación con el paper original y su repositorio
 
 Este caso de uso está inspirado en el trabajo:
 
-> **M. Dindin, Y. Umeda, F. Chazal – “Topological Data Analysis for Arrhythmia Detection through Modular Neural Networks” (2019)** 
+> **M. Dindin, Y. Umeda, F. Chazal – “Topological Data Analysis for Arrhythmia Detection through Modular Neural Networks” (2019)**
 
 * Paper: [https://arxiv.org/abs/1906.05795](https://arxiv.org/abs/1906.05795)
 * Código oficial: [https://github.com/anticdimi/tda-arrhythmia-detection](https://github.com/anticdimi/tda-arrhythmia-detection)
 
-### 6.1. ¿Qué hace el paper?
+### 7.1. ¿Qué hace el paper?
 
 Muy resumido:
 
@@ -441,7 +464,7 @@ Muy resumido:
   * Otros canales convolucionales.
 * Entrena y evalúa un modelo de **clasificación supervisada (binary + multi-clase)** con validación por paciente.
 
-### 6.2. Similitudes con este repositorio
+### 7.2. Similitudes con este repositorio
 
 * Ambos usan **ECGs reales de PhysioNet** (NSRDB y MITDB).
 * Ambos emplean **Topological Data Analysis** para capturar la “forma” del latido.
@@ -451,7 +474,7 @@ Muy resumido:
   * Describir geométricamente la señal de forma más estable que features puramente locales.
 * El objetivo conceptual es parecido: **mejorar la comprensión/diagnóstico de arritmias usando TDA**.
 
-### 6.3. Diferencias importantes
+### 7.3. Diferencias importantes
 
 **1. Tipo de TDA utilizada**
 
@@ -503,7 +526,7 @@ Muy resumido:
 
 ---
 
-## 7. Qué se podría extender (trabajos futuros)
+## 8. Qué se podría extender (trabajos futuros)
 
 Algunas extensiones naturales:
 
@@ -522,7 +545,7 @@ Algunas extensiones naturales:
 
 ---
 
-## 8. Resumen conceptual para la memoria/presentación
+## 9. Resumen conceptual para la memoria/presentación
 
 1. Partimos de **ECG reales** (normal y arrítmico).
 2. Reconstruimos la dinámica cardiaca vía **sliding window embedding**.
@@ -534,4 +557,4 @@ Algunas extensiones naturales:
 
    * En el ECG normal, el embedding parece un círculo y hay un ciclo en H₁ **muy persistente**.
    * En el ECG arrítmico, la estructura de círculo se rompe y la persistencia en H₁ es menor.
-5. Concluimos que la TDA proporciona una forma **geométrica y robusta** de medir la periodicidad del corazón más allá de técnicas puramente estadísticas o frecuenciales, y que este caso de uso se alinea con ideas del paper original, pero con un enfoque más simple, visual y didáctico, ideal para proyectos docentes de Geometría de la Información.
+5. Concluimos que la TDA proporciona una forma **geométrica y robusta** de medir la periodicidad del corazón más allá de técnicas puramente estadísticas o frecuenciales, y que este caso de uso se alinea con el README teórico del proyecto y con ideas del paper original, pero con un enfoque más simple, visual y didáctico, ideal para proyectos docentes de Geometría de la Información.
