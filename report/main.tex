@@ -53,7 +53,7 @@
 
  \subsection{Contextualización del TDA}
 
-   El análisis topológico de datos (TDA, \textit{Topological Data Analysis}) es un enfoque para estudiar conjuntos de datos mediante técnicas procedentes de la topología. Su principal ventaja es que es \textbf{insensible a la métrica concreta} elegida y, además, proporciona herramientas para reducción de dimensionalidad, robustez frente al ruido, y la síntesis de información geométrica en \textbf{invariantes algebraicos} interpretables.
+   El análisis topológico de datos (TDA, Topological Data Analysis) es un enfoque para estudiar conjuntos de datos mediante técnicas procedentes de la topología. Su principal ventaja es que es insensible a la métrica concreta elegida y, además, proporciona herramientas para reducción de dimensionalidad, robustez frente al ruido, y la síntesis de información geométrica en invariantes algebraicos interpretables.
 
    El marco del TDA establece un vínculo conceptual entre las siguientes tres áreas matemáticas:
 
@@ -65,18 +65,18 @@
      \item \textbf{Topología geométrica}: analiza variedades y las aplicaciones entre ellas, especialmente los embebimientos entre variedades.
    \end{itemize}
 
-   El TDA traduce la información métrica del conjunto de datos en invariantes topológicos que describen su \textbf{estructura global}, independientemente del espacio ambiente o la dimensión en que se encuentren los datos.
+   El TDA traduce la información métrica del conjunto de datos en invariantes topológicos que describen su estructura global, independientemente del espacio ambiente o la dimensión en que se encuentren los datos.
 
 
  \subsection{Homología Persistente}
 
-   La herramienta central del TDA es la \textbf{homología persistente}, una adaptación de la homología clásica que permite estudiar nubes de puntos a múltiples escalas.
+   La herramienta central del TDA es la homología persistente, una adaptación de la homología clásica que permite estudiar nubes de puntos a múltiples escalas.
 
-   El supuesto fundamental es que la \textbf{forma global de los datos contiene información relevante}. Datos en alta dimensión suelen ser inherentemente dispersos pero tienden a concentrarse alrededor de estructuras de baja dimensión. La homología persistente proporciona una caracterización precisa de estas estructuras.
+   El supuesto fundamental es que la forma global de los datos contiene información relevante. Datos en alta dimensión suelen ser inherentemente dispersos pero tienden a concentrarse alrededor de estructuras de baja dimensión. La homología persistente proporciona una caracterización precisa de estas estructuras.
 
-   Uno de los retos es que muchos algoritmos requieren fijar parámetros (por ejemplo, umbrales, radios o resoluciones). Sin conocimiento previo, elegir los parámetros adecuados es difícil. La idea de la homología persistente es considerar \textbf{todos los valores del parámetro} y sintetizar esa evolución en un objeto manejable.
+   Uno de los retos es que muchos algoritmos requieren fijar parámetros (por ejemplo, umbrales, radios o resoluciones). Sin conocimiento previo, elegir los parámetros adecuados es difícil. La idea de la homología persistente es considerar todos los valores del parámetro y sintetizar esa evolución en un objeto manejable.
 
-   El parámetro clave en este contexto es el \textbf{parámetro de escala} (o \textit{valor de filtración}). El parámetro controla la resolución espacial a la que se exploran los datos:
+   El parámetro clave en este contexto es el parámetro de escala (o \textit{valor de filtración}). El parámetro controla la resolución espacial a la que se exploran los datos:
    \begin{itemize}
      \item para escalas muy pequeñas, se capturan detalles finos (incluyendo ruido),
      \item para escalas grandes, solo permanecen las estructuras globales.
@@ -87,7 +87,7 @@
      \mathcal{X}_{r_0} \subseteq \mathcal{X}_{r_1} \subseteq \mathcal{X}_{r_2} \subseteq \cdots.
    \]
 
-   Cada $\mathcal{X}_r$ representa una aproximación del ``espacio subyacente'' de los datos a escala $r$. Topológicamente, la homología persistente identifica \textbf{características topológicas}:
+   Cada $\mathcal{X}_r$ representa una aproximación del ``espacio subyacente'' de los datos a escala $r$. Topológicamente, la homología persistente identifica características topológicas:
 
    \begin{itemize}
      \item dimensión $0$: componentes conexas,
@@ -103,7 +103,7 @@
      \item \textbf{muerte}: la característica desaparece (se rellena, se fusiona…).
    \end{itemize}
 
-   Las características que persisten durante un intervalo largo de escalas se interpretan como \textbf{estructuras reales de los datos}. Las que aparecen brevemente se consideran ruido.
+   Las características que persisten durante un intervalo largo de escalas se interpretan como estructuras reales de los datos. Las que aparecen brevemente se consideran ruido.
 
 
    En aplicaciones prácticas, características obtenidas se suelen representar mediante:
@@ -123,15 +123,15 @@
            Un código de barras es una \emph{línea temporal de características topológicas}. Cada barra corresponde a una única característica topológica (una componente, un ciclo, una cavidad, etc.) y registra:
 
            \begin{itemize}
-             \item \textbf{su escala de nacimiento} (cuando la característica aparece al engrosar los datos),
-             \item \textbf{su escala de muerte} (cuando la característica se rellena, se fusiona o desaparece).
+             \item su \textbf{escala de nacimiento} (cuando la característica aparece al engrosar los datos),
+             \item su \textbf{escala de muerte} (cuando la característica se rellena, se fusiona o desaparece).
            \end{itemize}
 
-           Una barra \textbf{no} indica \emph{qué puntos concretos} crean la componente o el ciclo, ni \emph{dónde} está situada la característica en la nube de puntos. Solo certifica que \emph{alguna} característica de ese tipo homológico existió en ese intervalo de escalas.
+           Una barra no indica \emph{qué puntos concretos} crean la componente o el ciclo, ni \emph{dónde} está situada la característica en la nube de puntos. Solo certifica que \emph{alguna} característica de ese tipo homológico existió en ese intervalo de escalas.
 
            \begin{itemize}
-             \item \textbf{Barras largas} $\to$ características robustas y de gran escala.
-             \item \textbf{Barras cortas} $\to$ estructuras inestables o ruido.
+             \item Barras largas $\to$ características robustas y de gran escala.
+             \item Barras cortas $\to$ estructuras inestables o ruido.
            \end{itemize}
 
      \item \textbf{diagramas de persistencia} (persistence diagram): multiconjunto de puntos en
@@ -141,12 +141,12 @@
 
            Este diagrama es un \emph{diagrama de dispersión geométrico} de todas las características, donde:
            \begin{itemize}
-             \item el \textbf{eje $x$} representa la escala de nacimiento,
-             \item el \textbf{eje $y$} representa la escala de muerte.
+             \item el eje $x$ representa la escala de nacimiento,
+             \item el eje $y$ representa la escala de muerte.
            \end{itemize}
 
            Cada punto $(u,v)$ representa un agujero que nace en la escala $u$ y muere en la escala $v$.
-           La distancia por encima de la diagonal $u = v$ indica la \textbf{persistencia}.
+           La distancia por encima de la diagonal $u = v$ indica la persistencia.
    \end{itemize}
 
    \begin{figure}[H]
@@ -159,9 +159,9 @@
 
  \subsection{Complejos Simpliciales}
 
-   Un \textbf{complejo simplicial} es una colección de puntos, aristas, triángulos y sus generalizaciones ($k$–simplexes) que contiene todas las caras de cada simplex y cuyas intersecciones son caras comunes.
+   Un complejo simplicial es una colección de puntos, aristas, triángulos y sus generalizaciones ($k$–simplexes) que contiene todas las caras de cada simplex y cuyas intersecciones son caras comunes.
 
-   El \textbf{complejo de Vietoris–Rips} a escala $\delta$ incluye un simplex sobre un conjunto finito de puntos siempre que \textbf{todas las distancias por pares} sean menores o iguales que $\delta$.
+   El \textbf{complejo de Vietoris–Rips} a escala $\delta$ incluye un simplex sobre un conjunto finito de puntos siempre que todas las distancias por pares sean menores o iguales que $\delta$.
    Es computacionalmente eficiente y muy usado en práctica.
 
 
@@ -176,7 +176,7 @@
        \bigcap_{x \in \sigma} B(x,\varepsilon) \neq \varnothing.
      \]
 
-     Este complejo es el \textbf{nervio} de la familia de bolas $\{B(x,\varepsilon)\}_{x\in X}$.
+     Este complejo es el nervio de la familia de bolas $\{B(x,\varepsilon)\}_{x\in X}$.
 
      \begin{figure}[H]
        \centering
@@ -189,12 +189,12 @@
      \textbf{Relación fundamental: el lema del nervio.}
 
 
-     El lema del nervio establece que el complejo de Čech es \textbf{homotópicamente equivalente} a la unión de bolas:
+     El lema del nervio establece que el complejo de Čech es homotópicamente equivalente a la unión de bolas:
      \[
        \check{C}_\varepsilon(X) \simeq \bigcup_{x\in X} B(x,\varepsilon).
      \]
 
-     Esto significa que la topología que captura el complejo de Čech es \textbf{exactamente la misma} que la del engrosamiento geométrico de los datos.
+     Esto significa que la topología que captura el complejo de Čech es exactamente la misma que la del engrosamiento geométrico de los datos.
 
      Al aumentar $\varepsilon$ se obtiene una filtración:
      \[
