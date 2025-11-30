@@ -10,3 +10,5 @@ presentation/*
 !presentation/main.tex
 !presentation/figures/
 !presentation/figures/*
+
+notes/tda_explained.md
