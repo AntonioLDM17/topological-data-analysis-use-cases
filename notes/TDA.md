@@ -16,10 +16,10 @@ TDA is premised on the idea that the shape of data sets contains relevant inform
 
 Many algorithms for data analysis, including those used in TDA, require setting various parameters. Without prior domain knowledge, the correct collection of parameters for a data set is difficult to choose.
 
+The main insight of persistent homology is to use the information obtained from all parameter values by encoding this huge amount of information into an understandable and easy-to-represent form. With TDA, there is a mathematical interpretation when the information is a homology group. In general, the assumption is that features that persist for a wide range of parameters are "true" features. Features persisting for only a narrow range of parameters are presumed to be noise, although the theoretical justification for this is unclear.
+
 > \[!NOTE]
 >In the context of TDA (specifically *persistent homology*) **the parameter** refers to the **scale parameter** (or *filtration value*) used to build a family of topological spaces.
-
-The main insight of persistent homology is to use the information obtained from all parameter values by encoding this huge amount of information into an understandable and easy-to-represent form. With TDA, there is a mathematical interpretation when the information is a homology group. In general, the assumption is that features that persist for a wide range of parameters are "true" features. Features persisting for only a narrow range of parameters are presumed to be noise, although the theoretical justification for this is unclear.
 
 ### **What does Persistent Homology provide?**
 
@@ -27,7 +27,7 @@ The main insight of persistent homology is to use the information obtained from 
 
 Persistent Homology captures the informally called features, concretelly, these are **topological invariants describing the shape of the data**, each corresponding to the presence of a hole whose **boundary has a specific intrinsic dimension**. In other words:
 
-> A *feature* in persistent homology is a topological hole whose intrinsic dimensionality equals the dimension of the manifold that bounds it (regardless of the ambient dimension where the data lives).
+> *features* in persistent homology are a topological hole whose intrinsic dimensionality equals the dimension of the manifold that bounds it (regardless of the ambient dimension where the data lives).
 
 In algebraic topology:
 
@@ -35,9 +35,9 @@ In algebraic topology:
 - A 1-dimensional feature is a hole bounded by a loop (a set of points distributed around a closed curve: dimension 1)
 - A 2-dimensional feature is a void (a bubble) (a set of points distributed around a hollow sphere-like cavity: bounded by a 2D surface)
 
-Finding these topological features within the data set requires building candidate point agrupations and "testing" their fitness. Concretely, this agrupations are taken as the sublevel family of complexes obtained by thickening the data at scale $r$. In plain words, merging into the same agrupation pairs of points with a nonempty intersection of the $r$-balls built around them.
+Finding these topological features within the data set requires building candidate point agrupations and "testing" their fitness. Concretely, this agrupations are taken as the sublevel family of complexes obtained by thickening the data at scale $r$. In plain words, merging into the same agrupation pairs of points with a nonempty intersection of the $r$-balls centered in them.
 
-> The scale ($r$) is the radius of the balls artificially placed around each data point.
+> The scale $r$ is the radius of the balls artificially placed around each data point.
 
 The *persistent* qualifiyer in *Persistent Homology* means that it does not study topology at a single scale; instead it studies how the topology of the data changes as we the scale is continuously varied, and it keeps only the features that survive for a long range of scales.
 
@@ -54,7 +54,24 @@ This features are encoded into visualy representable mathematical artifacts. Mai
 
 - **persistence barcode**: multiset of intervals in $\mathbb{R}$
 
+  A barcode is a *timeline of topological features*, each bar corresponds to a single topological feature (a component, loop, void, etc.) and records:
+
+  - **its birth scale** (when the feature first appears as we thicken the data),
+  - **its death scale** (when the feature gets filled, merged, or disappears).
+
+  A bar does **not** tell *which specific points* create the component or loop, nor *where* the feature lies in the point cloud. It only certifies that *some* feature of that homological type existed for that range of scales.
+
+  - **Long bars** $\to$ robust, large-scale features
+  - **Short bars** $\to$ unstable structures or noise
+
 - **persistence diagram**: multiset of points in $\Delta := {(u,v) \in \mathbb{R}^2 \mid u,v \ge 0,\ u \le v}$.
+
+  This diagram is a *geometric scatter plot* of all features, where:
+
+  - The **x-axis** is the birth scale
+  - The **y-axis** is the death scale
+
+  Each point $(u,v)$ represents a hole born at scale $u$ and dying at scale $v$. Distance above the diagonal $u=v$ indicates persistence.
 
 ## **Relevant Simplicial Complexes**
 
@@ -74,7 +91,39 @@ In algebraic topology and topological data analysis, the Čech complex is an abs
 
 [Wikipedia Image]
 
-The Čech complex is a subcomplex of the Vietoris-Rips complex. While the Čech complex is more computationally expensive than the Vietoris–Rips complex, since we must check for higher order intersections of the balls in the complex, the nerve theorem provides a guarantee that the Čech complex is homotopy equivalent to union of the balls in the complex. The Vietoris-Rips complex may not be.
+The Čech complex is a subcomplex of the Vietoris-Rips complex. While the Čech complex is more computationally expensive than the Vietoris-Rips complex, since we must check for higher order intersections of the balls in the complex, the nerve theorem provides a guarantee that the Čech complex is homotopy equivalent to union of the balls in the complex. The Vietoris-Rips complex may not be.
+
+**Relationship between Persistent Homology and the Čech Complex**
+
+Persistent homology requires a family of spaces that grows with a scale parameter. This family is called a **filtration**:
+
+$$
+\mathcal{X}*0 \subseteq \mathcal{X}*{r_1} \subseteq
+\mathcal{X}*{r_2} \subseteq \dots \subseteq \mathcal{X}*{r_k}
+$$
+
+As we don't have these spaces, just a point cloud, we must manually *generate* them from it.
+
+Given a point cloud $P = {x_1, \dots, x_n}$, the Čech complex at scale $r$, denoted by $\mathrm{Čech}(P, r_0)$, is generated by putting a ball of radius $r$ around each point and adding a simplex whenever the balls overlap all together.
+
+As $r$ increases and more balls intersect, more simplices appear and the complex grows. i.e., for every pair of scales $r_i, r_j$ such that $r_i < r_j$, every connection that exists in a $r_i$-complex will also exist in the $r_j$-complex.
+
+$$
+\mathrm{Čech}(P, r_0)
+\subseteq
+\mathrm{Čech}(P, r_1)
+\subseteq
+\mathrm{Čech}(P, r_2)
+\subseteq \cdots
+$$
+
+The Cech complexes are *homotopy equivalent* to the true union of balls $\bigcup_i B(x_i,r)$. This means the topology they capture is **exactly correct**.
+
+The problem with Cech complexes is that they are expensive to compute. Thus, in practice, we often use cheaper approximations like:
+
+- **Vietoris-Rips complex** (combinatorial approximation)
+- **Alpha complex** (geometric, Delaunay-based)
+- **Witness complex**, etc.
 
 ---
 

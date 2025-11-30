@@ -1,1 +1,480 @@
-% report
+\documentclass[a4paper,12pt]{article}
+
+% Paquetes recomendados
+\usepackage[utf8]{inputenc}   % Para usar tildes directamente
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}   % Para que la estructura esté en castellano
+\usepackage{amsmath, amssymb} % Símbolos matemáticos
+\usepackage{hyperref}         % Enlaces en el PDF
+\usepackage{geometry}         % Ajustar márgenes
+\usepackage{diagbox}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{graphicx}
+\usepackage{caption}
+\geometry{margin=2.5cm}
+\usepackage{natbib}
+\bibliographystyle{abbrvnat}
+\setcitestyle{authoryear,open={(},close={)}}
+\setlength{\parskip}{1em} % Espacio entre párrafos
+\setlength{\parindent}{0pt} % Sin sangría
+
+\begin{document}
+
+\begin{titlepage}
+  \centering
+  \vspace*{1cm}
+
+  {\Large\textsc{Máster en Inteligencia Artificial}}\\[0.5cm]
+  {\large Escuela Técnica Superior de Ingeniería ICAI}\\[2cm]
+
+  % Título grande
+  {\Huge\bfseries Aplicaciones del Análisis Topológico de Datos (TDA)}\\[0.5cm]
+
+  % Imagen opcional (coloca aquí un logo o figura)
+  \includegraphics[width=0.35\textwidth]{figures/tda_cover_image.png}\\[2cm]
+
+  % Datos del estudiante
+  {\large Pablo García Molina, Antonio Lorenzo Díaz-Meco, }\\[0.25cm]
+  {\large Andrés Martínez Fuentes, Miguel Montes Lorenzo }\\[0.25cm]
+  {\large Francisco Javier Ríos Montes}\\[1cm]
+  {\large Asignatura: Geometría de la Información}\\[0.25cm]
+  {\large Profesor: David Alfaya Sánchez}\\[2cm]
+
+  {\large \today}
+
+  \vfill
+\end{titlepage}
+
+\tableofcontents
+
+\section{Revisión del Marco Teórico}
+ \label{sec:marco_teorico}
+
+ \subsection{Contextualización del TDA}
+
+   El análisis topológico de datos (TDA, \textit{Topological Data Analysis}) es un enfoque para estudiar conjuntos de datos mediante técnicas procedentes de la topología. Su principal ventaja es que es \textbf{insensible a la métrica concreta} elegida y, además, proporciona herramientas para reducción de dimensionalidad, robustez frente al ruido, y la síntesis de información geométrica en \textbf{invariantes algebraicos} interpretables.
+
+   El marco del TDA establece un vínculo conceptual entre las siguientes tres áreas matemáticas:
+
+   \begin{itemize}
+     \item \textbf{Topología algebraica}: emplea herramientas del álgebra para estudiar espacios topológicos a través de invariantes (como la homología), que clasifican espacios hasta equivalencia homotópica.
+
+     \item \textbf{Geometría métrica}: considera espacios métricos como objeto principal, con aplicaciones relevantes en geometría riemanniana y teoría geométrica de grupos.
+
+     \item \textbf{Topología geométrica}: analiza variedades y las aplicaciones entre ellas, especialmente los embebimientos entre variedades.
+   \end{itemize}
+
+   El TDA traduce la información métrica del conjunto de datos en invariantes topológicos que describen su \textbf{estructura global}, independientemente del espacio ambiente o la dimensión en que se encuentren los datos.
+
+
+ \subsection{Homología Persistente}
+
+   La herramienta central del TDA es la \textbf{homología persistente}, una adaptación de la homología clásica que permite estudiar nubes de puntos a múltiples escalas.
+
+   El supuesto fundamental es que la \textbf{forma global de los datos contiene información relevante}. Datos en alta dimensión suelen ser inherentemente dispersos pero tienden a concentrarse alrededor de estructuras de baja dimensión. La homología persistente proporciona una caracterización precisa de estas estructuras.
+
+   Uno de los retos es que muchos algoritmos requieren fijar parámetros (por ejemplo, umbrales, radios o resoluciones). Sin conocimiento previo, elegir los parámetros adecuados es difícil. La idea de la homología persistente es considerar \textbf{todos los valores del parámetro} y sintetizar esa evolución en un objeto manejable.
+
+   El parámetro clave en este contexto es el \textbf{parámetro de escala} (o \textit{valor de filtración}). El parámetro controla la resolución espacial a la que se exploran los datos:
+   \begin{itemize}
+     \item para escalas muy pequeñas, se capturan detalles finos (incluyendo ruido),
+     \item para escalas grandes, solo permanecen las estructuras globales.
+   \end{itemize}
+
+   Geométricamente, para cada punto $x_i$ se coloca una bola de radio $r$, y se analizan las intersecciones entre ellas. El conjunto de bolas crece monótonamente con $r$, generando una familia creciente:
+   \[
+     \mathcal{X}_{r_0} \subseteq \mathcal{X}_{r_1} \subseteq \mathcal{X}_{r_2} \subseteq \cdots.
+   \]
+
+   Cada $\mathcal{X}_r$ representa una aproximación del ``espacio subyacente'' de los datos a escala $r$. Topológicamente, la homología persistente identifica \textbf{características topológicas}:
+
+   \begin{itemize}
+     \item dimensión $0$: componentes conexas,
+     \item dimensión $1$: ciclos (agujeros rodeados por curvas),
+     \item dimensión $2$: cavidades tridimensionales similares a burbujas,
+   \end{itemize}
+
+   Las características en homología persistente son un agujero topológico cuya dimensionalidad intrínseca coincide con la dimensión de la variedad entorno a la que se distribuyen sus puntos. Para obtenerlas se generan ``agrupaciones candidatas" resultantes de agrupar localmente los puntos, y se prueba si dan lugar a agujeros topológicos de dimensión $k$.
+
+   El calificativo \emph{persistente} surge al estudiar cómo nacen y mueren estas clases topológicas al variar la escala:
+   \begin{itemize}
+     \item \textbf{nacimiento}: la característica aparece en la filtración,
+     \item \textbf{muerte}: la característica desaparece (se rellena, se fusiona…).
+   \end{itemize}
+
+   Las características que persisten durante un intervalo largo de escalas se interpretan como \textbf{estructuras reales de los datos}. Las que aparecen brevemente se consideran ruido.
+
+
+   En aplicaciones prácticas, características obtenidas se suelen representar mediante:
+
+   %  La homología persistente se visualiza mediante:
+   %  \begin{itemize}
+   %    \item \textbf{códigos de barras}: multiconjuntos de intervalos en $\mathbb{R}$,
+   %    \item \textbf{diagramas de persistencia}: multiconjunto de puntos $(u,v) \in \Delta := \{u \le v\}$.
+   %  \end{itemize}
+
+   %  Un punto $(u,v)$ indica que una característica nace en $u$ y muere en $v$.
+   %  La distancia a la diagonal $u=v$ mide la persistencia.
+
+   \begin{itemize}
+     \item \textbf{códigos de barras} (persistence barcode): multiconjunto de intervalos en $\mathbb{R}$.
+
+           Un código de barras es una \emph{línea temporal de características topológicas}. Cada barra corresponde a una única característica topológica (una componente, un ciclo, una cavidad, etc.) y registra:
+
+           \begin{itemize}
+             \item \textbf{su escala de nacimiento} (cuando la característica aparece al engrosar los datos),
+             \item \textbf{su escala de muerte} (cuando la característica se rellena, se fusiona o desaparece).
+           \end{itemize}
+
+           Una barra \textbf{no} indica \emph{qué puntos concretos} crean la componente o el ciclo, ni \emph{dónde} está situada la característica en la nube de puntos. Solo certifica que \emph{alguna} característica de ese tipo homológico existió en ese intervalo de escalas.
+
+           \begin{itemize}
+             \item \textbf{Barras largas} $\to$ características robustas y de gran escala.
+             \item \textbf{Barras cortas} $\to$ estructuras inestables o ruido.
+           \end{itemize}
+
+     \item \textbf{diagramas de persistencia} (persistence diagram): multiconjunto de puntos en
+           \[
+             \Delta := \{(u,v) \in \mathbb{R}^2 \mid u,v \ge 0,\ u \le v\}.
+           \]
+
+           Este diagrama es un \emph{diagrama de dispersión geométrico} de todas las características, donde:
+           \begin{itemize}
+             \item el \textbf{eje $x$} representa la escala de nacimiento,
+             \item el \textbf{eje $y$} representa la escala de muerte.
+           \end{itemize}
+
+           Cada punto $(u,v)$ representa un agujero que nace en la escala $u$ y muere en la escala $v$.
+           La distancia por encima de la diagonal $u = v$ indica la \textbf{persistencia}.
+   \end{itemize}
+
+   \begin{figure}[H]
+     \centering
+     \includegraphics[width=0.6\textwidth]{figures/representations.png}
+     \captionsetup{justification=centering}
+     \caption{Representaciones gráficas de Homología Persistente}
+     \label{fig:persistence_barcode_and_diagrame}
+   \end{figure}
+
+ \subsection{Complejos Simpliciales}
+
+   Un \textbf{complejo simplicial} es una colección de puntos, aristas, triángulos y sus generalizaciones ($k$–simplexes) que contiene todas las caras de cada simplex y cuyas intersecciones son caras comunes.
+
+   El \textbf{complejo de Vietoris–Rips} a escala $\delta$ incluye un simplex sobre un conjunto finito de puntos siempre que \textbf{todas las distancias por pares} sean menores o iguales que $\delta$.
+   Es computacionalmente eficiente y muy usado en práctica.
+
+
+ \subsection{El complejo de Čech y su relación con la homología persistente}
+
+   En el TDA, las filtraciones deben construirse a partir de los datos, ya que no se conoce el espacio subyacente. El complejo de Čech proporciona una forma natural y geométricamente fiel de hacerlo.
+
+   \paragraph{Definición.}
+
+     Dado un conjunto finito de puntos $X$ y un parámetro $\varepsilon > 0$, el complejo de Čech $\check{C}_\varepsilon(X)$ se construye añadiendo un simplex $\sigma$ si las bolas de radio $\varepsilon$ centradas en los puntos de $\sigma$ tienen intersección no vacía:
+     \[
+       \bigcap_{x \in \sigma} B(x,\varepsilon) \neq \varnothing.
+     \]
+
+     Este complejo es el \textbf{nervio} de la familia de bolas $\{B(x,\varepsilon)\}_{x\in X}$.
+
+     \begin{figure}[H]
+       \centering
+       \includegraphics[width=0.35\textwidth]{figures/Cech-example.png}
+       \captionsetup{justification=centering}
+       \caption{Visualización del complejo de Čech}
+       \label{fig:cech_complex}
+     \end{figure}
+
+     \textbf{Relación fundamental: el lema del nervio.}
+
+
+     El lema del nervio establece que el complejo de Čech es \textbf{homotópicamente equivalente} a la unión de bolas:
+     \[
+       \check{C}_\varepsilon(X) \simeq \bigcup_{x\in X} B(x,\varepsilon).
+     \]
+
+     Esto significa que la topología que captura el complejo de Čech es \textbf{exactamente la misma} que la del engrosamiento geométrico de los datos.
+
+     Al aumentar $\varepsilon$ se obtiene una filtración:
+     \[
+       \check{C}_{\varepsilon_0}(X)
+       \subseteq
+       \check{C}_{\varepsilon_1}(X)
+       \subseteq
+       \check{C}_{\varepsilon_2}(X)
+       \subseteq \dots
+     \]
+
+     Aplicar homología a esta filtración produce el módulo persistente:
+     \[
+       H_k(\check{C}_{\varepsilon_0}) \to
+       H_k(\check{C}_{\varepsilon_1}) \to
+       H_k(\check{C}_{\varepsilon_2}) \to \cdots,
+     \]
+     y por el lema del nervio esto coincide (hasta equivalencia homotópica) con estudiar la homología persistente de la unión de bolas.
+
+     \textbf{Limitación computacional.}
+
+     El problema del complejo de Čech es que requiere comprobar intersecciones de orden alto, lo que lo hace costoso en práctica. Por ello, se usan aproximaciones más baratas cómo por ejemplo:
+     \begin{itemize}
+       \item \textbf{Vietoris-Rips} (combinatorial, muy eficiente),
+       \item \textbf{alpha-complexes} (geométricos, basados en triangulación de Delaunay),
+     \end{itemize}
+
+     Estas aproximaciones pueden no ser homotópicamente equivalentes a la unión de bolas en cada escala, pero son suficientemente precisas para capturar características persistentes de interés.
+
+
+\section{Implementaciones en python}
+
+ Hay una gran cantidad de librerias de python que implementan en cierta manera Topological Data Analysis pero nos centraremos en tres principalmente y comentaremos las herramientas matemáticas que usa umap.
+
+ \subsection{GUDHI}
+
+   GUDHI (\textit{Geometry Understanding in Higher Dimensions}) es la biblioteca de TDA más extensa disponible en Python.
+   Incluye herramientas de geometría computacional, construcción explícita de complejos simpliciales, cálculo completo de homología persistente y diversas representaciones topológicas para análisis y visualización.
+
+   \subsubsection*{Construcción de complejos simpliciales}
+
+     A diferencia de otras bibliotecas que solo soportan el complejo de Vietoris--Rips, GUDHI permite construir explícitamente una amplia variedad de complejos simpliciales \citep{gudhi2023manual}:
+
+     \begin{itemize}
+       \item \textbf{Complejo de Vietoris--Rips:} basado en pares de distancias y ampliamente usado en práctica.
+       \item \textbf{Complejo de Čech:} basado en intersecciones de bolas; más fiel pero más costoso.
+       \item \textbf{Alpha Complexes:} derivados de triangulaciones de Delaunay; adecuados para reconstrucción geométrica.
+       \item \textbf{Otros complejos:} como Witness Complexes o Cubical complexes.
+     \end{itemize}
+
+     Esta variedad permite un control fino sobre la estructura combinatoria utilizada para estudiar los datos.
+
+   \subsubsection*{Cálculo de homología persistente}
+
+     GUDHI implementa el algoritmo clásico de reducción de columnas para el cálculo de homología persistente a partir de filtraciones explícitas. Gracias a su estructura interna basada en \textit{simplex trees}, la biblioteca permite manejar complejos de gran tamaño de forma eficiente y obtener directamente diagramas de persistencia, códigos de barras y resultados en múltiples dimensiones topológicas de manera simultánea, lo que la convierte en una herramienta especialmente flexible para el análisis detallado de la estructura topológica de los datos \citep{gudhi2023manual}.
+
+   \subsubsection*{Reconstrucción de Variedades con GUDHI}
+
+     Una aplicación destacada de GUDHI es la reconstrucción geométrica de variedades a partir de conjuntos de puntos en espacios euclidianos. Para ello, GUDHI implementa los \emph{Alpha Complexes}, que se construyen a partir de la triangulación de Delaunay del conjunto de datos. Estos complejos permiten aproximar la forma y la topología de la variedad subyacente, preservando características geométricas importantes. Además, el cálculo de la homología persistente sobre estos complejos facilita la validación y el análisis topológico de la calidad de la reconstrucción. Esta capacidad es especialmente útil en aplicaciones como la reconstrucción de objetos tridimensionales en escáneres 3D, el análisis de formas geométricas y el modelado computacional, donde es crucial entender tanto la geometría como la topología del objeto muestreado \citep{gudhi2023manual}.
+
+   \subsubsection*{Uso básico en Python}
+
+     \begin{verbatim}
+import gudhi as gd
+
+rips = gd.RipsComplex(points=data, max_edge_length=1.0)
+simplex_tree = rips.create_simplex_tree(max_dimension=2)
+dgms = simplex_tree.persistence()
+gd.plot_persistence_diagram(dgms)
+\end{verbatim}
+
+ \subsection{Ripser.py}
+
+   Ripser.py es una biblioteca especializada en el cálculo eficiente de la homología persistente, focalizada exclusivamente en el complejo de Vietoris--Rips. A diferencia de GUDHI, Ripser.py no construye el complejo explícitamente, sino que lo hace de manera implícita, lo que permite un uso mucho más eficiente de la memoria. Esta característica es especialmente valiosa cuando se trabaja con conjuntos de datos grandes o de alta dimensionalidad. Además, Ripser.py utiliza cohomología persistente en lugar de homología estándar, una técnica que resulta ser más eficiente desde el punto de vista computacional. La biblioteca está optimizada para maximizar la velocidad de cálculo, buscando generar diagramas de persistencia de forma rápida y con bajo costo computacional. Sin embargo, debido a su especialización, no permite la manipulación explícita de complejos o filtraciones, limitándose estrictamente a la obtención directa de los diagramas de persistencia      \citep{ripser2019bauer}.
+
+   \subsubsection*{Uso de Ripser.py}
+
+     Ripser.py es sencillo de usar para calcular la homología persistente de un conjunto de puntos o una matriz de distancias. A continuación se muestra un ejemplo básico de uso en Python:
+
+     \begin{verbatim}
+import ripser
+from ripser import ripser
+import matplotlib.pyplot as plt
+
+data = ...  # matriz de puntos o matriz de distancias
+diagrams = ripser(data)['dgms']
+
+# Visualizar el diagrama de persistencia
+from persim import plot_diagrams
+plot_diagrams(diagrams, show=True)
+\end{verbatim}
+
+ \subsection{Giotto--TDA}
+
+   Giotto--TDA está diseñada específicamente para la integración de técnicas de análisis topológico de datos dentro de flujos de trabajo de aprendizaje automático. Aunque internamente utiliza Ripser para el cálculo eficiente de la homología persistente, Giotto--TDA añade una serie de funcionalidades avanzadas que no se encuentran en GUDHI. Entre ellas destacan los transformadores automáticos que convierten diagramas de persistencia en vectores numéricos útiles para modelos de machine learning, tales como paisajes de persistencia, imágenes, entropía y \textit{silhouettes}. También ofrece pipelines predefinidos que permiten incorporar TDA en redes neuronales o en modelos clásicos de aprendizaje automático, así como métodos de preprocesado automático para diferentes tipos de datos, incluyendo nubes de puntos e imágenes. En resumen, mientras GUDHI está orientado a proporcionar una plataforma completa para la geometría y la estructura interna de los datos topológicos, Giotto--TDA facilita la utilización práctica del contenido topológico como características para modelos de aprendizaje automático \citep{giottotda2021tauzin}.
+
+   \subsubsection*{Uso de Giotto--TDA}
+
+     Giotto--TDA ofrece una interfaz integrada con scikit-learn para aplicar transformaciones topológicas y usarlas en modelos de aprendizaje automático. Ejemplo de cálculo y vectorización de diagramas:
+
+     \begin{verbatim}
+from gtda.homology import VietorisRipsPersistence
+from gtda.diagrams import PersistenceLandscape
+
+# Crear el transformador de homología persistente
+vr = VietorisRipsPersistence(homology_dimensions=[0,1])
+
+# Calcular diagramas
+diagrams = vr.fit_transform(data)
+
+# Convertir diagramas a paisajes para ML
+pl = PersistenceLandscape()
+landscapes = pl.fit_transform(diagrams)
+\end{verbatim}
+
+
+ \subsection{Fundamentos de UMAP}
+
+   UMAP (Uniform Manifold Approximation and Projection) es un método de reducción de dimensionalidad que se fundamenta en conceptos de topología y geometría. Su procedimiento principal consiste en la construcción de un grafo de vecinos basado en un complejo de símplices fuzzy, inspirado en el complejo de Vietoris--Rips. A partir de este grafo, UMAP ajusta una proyección en un espacio de baja dimensión que intenta preservar la estructura tanto local como global del grafo original. A diferencia del análisis topológico de datos clásico, UMAP no calcula homología persistente, pero incorpora ideas topológicas —como complejos simpliciales y teoría de categorías— para mantener la coherencia estructural de los datos en la reducción dimensional. Esta aproximación le permite conservar las propiedades esenciales del espacio original, facilitando la visualización y el análisis exploratorio de datos complejos en dimensiones reducidas \citep{umap2018mcinnes}.
+
+   \subsubsection*{Uso de UMAP}
+
+     UMAP es utilizado para reducción de dimensionalidad preservando estructura topológica. Un ejemplo básico:
+
+     \begin{verbatim}
+import umap
+import numpy as np
+
+data = ...  # matriz de datos de alta dimensión
+reducer = umap.UMAP()
+embedding = reducer.fit_transform(data)
+\end{verbatim}
+
+\section{Aplicaciones}
+ \label{sec:aplicaciones}
+
+ En general, las capacidades del análisis topológico de datos (TDA) para capturar la forma y estructura de datos multidimensionales lo hacen adecuado para una amplia gama de aplicaciones en diversos campos. Sin embargo, nos centraremos en tres aplicaciones específicas que destacan por su relevancia y potencial impacto:
+
+ \subsection{Neurociencia y Análisis de Imágenes Cerebrales}
+   \label{subsec:neurociencia}
+
+   Debido a que las redes cerebrales exhiben interacciones de orden superior que no pueden ser capturadas adecuadamente por métodos tradicionales el TDA, aplicado sobre redes estructurales derivadas de tecnologías como fMRI (resonancia magnética funcional) o EEG (electroencefalografía), permite analizar la conectividad cerebral de manera más profunda.
+
+   Típicamente, esto se hace mediante la construcción de complejos simpliciales a partir de las conexiones neuronales (representando, por lo tanto, las neuronas como vértices y sus sinapsis como aristas en un grafo dirigido). Sin embargo, el enfoque tradicional "\textit{depende de la elección de umbrales arbitrarios para definir los pesos de las conexiones, lo cual dificulta la comparación entre diferentes redes cerebrales.}"\quad \citep{Das2023Topological}. De cara a sortear esta limitación, el TDA destaca como un método robusto, capaz de identificar características topológicas persistentes (como ciclos y agujeros) en las redes cerebrales. Para ello, se siguen los siguientes pasos:
+   \begin{itemize}
+     \item \textbf{Parcelización del cerebro:} Se divide el cerebro en regiones de interés (ROIs) utilizando atlas cerebrales estándar.
+     \item \textbf{Construcción de la matriz de conectividad:} Teniendo en cuenta las correlaciones entre distintas neuronas o regiones cerebrales, se genera el grafo ponderado.
+     \item \textbf{Generación del filtro de grafos según umbrales:} Variando el umbral de conexión, se visualiza cómo evoluciona la estructura del grafo.
+     \item \textbf{Cálculo de homología persistente:} Mediante la modificación del parámetro de escala explicado con anterioridad, se captura cómo se modifican las componentes conexas y los ciclos en el grafo.
+   \end{itemize}
+
+   Para ello y como ya hemos visto, es fundamental el concepto de \textbf{homología persistente}, que permita la identificación de invariantes topológicas, como curvas de Betti o características de Euler. Mediante estas métricas, es posible comparar y clasificar diferentes estados cerebrales (por ejemplo, sano vs. enfermo) o incluso identificar biomarcadores para enfermedades neurológicas como el Alzheimer o la esquizofrenia.
+
+   En los últimos años, esta aplicación se ha extendido a modelos dinámicos de la actividad cerebral, aplicando homología persistente a una serie temporal de redes cerebrales, permitiendo así la discriminación de patrones topológicos dinámicos entre sujetos o estados \citep{chung2022dynamic}.
+
+ \subsection{Análisis de Series Temporales Financieras}
+   \label{subsec:finanzas}
+
+   El análisis topológico de datos ha demostrado ser una herramienta valiosa en el ámbito financiero, especialmente en el análisis de series temporales. En este contexto, permite la predicicción de tendencias del mercado y la detección de anomalías en los datos financieros
+
+   Principalmente, el funcionamiento del TDA introduce una intuición que resulta extremadamente útil para detectar valores atípicos en la serie. Dado que es capaz de extrapolar la forma global de los datos, puede identificar patrones que se desvían significativamente de la norma. Primero, se construyen representaciones de la serie temporal en espacios Euclídeos de alta dimensión mediante técnicas como los \textbf{embeddings de retraso}, cuyas dinámicas permiten la extracción de las leyes que rigen la evolución temporal de los precios. Una vez más, mediante el uso de homología persistente, se pueden identificar transiciones críticas en el estado del mercado, como cambios repentinos en la volatilidad o la aparición de burbujas financieras \citep{Akingbade2024TDABubbles}. La robustez ante perturbaciones que caracteriza a la homología persistente es especialmente beneficiosa en este contexto, ya que '\textit{es ideal para la predicción fidedigna de cambios de régimen en mercados}' \quad \citep{RuizOrtiz2022TurbulenceTDA}, evidenciando  dichos cambios mediante firmas topológicas como cambios en los números de Betti o en las características de Euler.
+
+   En concreto, algunos estudios sugieren, empíricamente, la existencia de correlaciones entre ciertos invariantes topológicos y eventos financieros significativos. Por ejemplo, se ha observado que, al acercarse momentos de crisis significativa (\textit{crashes}), la geometría de la nube de puntos construida a partir de los retornos desarrolla ciclos robustos que persisten en múltiples escalas \citep{Zhang2025MarketCrashesTDA}. Esto sugiere que el TDA podría ser utilizado como una herramienta predictiva para explotar señales tempranas de regímenes inestables que podrían acabar en colapsos.
+
+   \begin{figure}[H]
+     \centering
+     \includegraphics[width=1\textwidth]{figures/Finance_bubble.png}
+     \captionsetup{justification=centering}
+     \caption{Diagrama esquemático de la evolución de los estados topológicos en una serie temporal a lo largo de un colapso financiero. Extraído de \citep{Yen2021SingaporeTaiwanTDA}.}
+     \label{fig:finance_bubble}
+   \end{figure}
+
+   En la figura superior, se observa cómo la topología de los datos financieros evoluciona a medida que se acerca un colapso del mercado. En las etapas iniciales (primera imagen por la izquierda), tenemos componentes conexas que forman un \textit{cluster} compacto. A medida que nos acercamos al colapso (segunda y tercera imagen), comienzan a romperse estas conexiones, fragmentándose en múltiples componentes. Finalmente, en la etapa de colapso (cuarta imagen), las acciones individuales se organizan en grupos dispersos, reflejando la volatilidad y la incertidumbre del mercado en ese momento.
+
+ \subsection{Modelado de Propagaciones de Epidemias (COVID-19)}
+   \label{subsec:epidemias}
+
+   De cara al análisis de la propagación de enfermedades infecciosas, indagaremos acerca de dos vertientes principales: investigaciones dedicadas al modelado de las dinámicas de propagación y usos más epidemiológicos para el estudio de interacciones entre factores de riesgo. Dado que la propagación de enfermedades infecciosas es un fenómeno inherentemente topológicoso, el TDA es particularmente adecuado para capturar estas dinámicas espaciales y temporales.
+
+   En primer lugar, el TDA se ha empleado para modelar esta propagación, principalmente mediante el uso del algoritmo Mapper \citep{MapperAlgorithm}, que permite construir representaciones simplificadas de datos complejos. Aplicado sobre datos derivados de la epidemia de COVID-19 tanto en Estados Unidos \citep{Chen2021TDACoronavirusSpread} como en España \citep{Andrada2024TDACovidEspana}, se construye una nube de puntos en 4 dimensiones (latitud, longitud, día y casos acumulados) que captura la evolución espacial y temporal de la enfermedad. A partir de esta nube, se genera un grafo que agrupa regiones con patrones similares de propagación, reflejando así la aparición y evolución de \textit{hot-spots} epidémicos. Esto supone un enorme valor añadido respecto a métodos tradicionales, ya que integra información temporal y espacial de en una sola estructura de datos, permitiendo la obtención de interacciones complejas entre diferentes regiones y momentos temporales.
+
+   Además, el TDA ha sido utilizado para analizar factores de riesgo asociados a la propagación del COVID-19, así como al estudio de variables influyentes en la mortalidad asociada a la enfermedad (como políticas públicas, saturación hospitalaria o cambios de variantes). Respecto a lo primero, usando un enorme conjunto de historias clínicas con variables como hipertensión, obesidad, edad, sexo, etc., se ha aplicado homología persistente para identificar combinaciones de factores que aumentan el riesgo de infección \citep{Platt2024EpiTDARAAS}. En cuanto a la mortalidad, se han identificado patrones topológicos en los datos que sugieren interacciones complejas entre picos topológicos y tasas de mortalidad, proporcionando así información valiosa para la toma de decisiones en salud pública \citep{Fairchild2025TDAMortalityCovid}.
+
+   En conclusión, el análisis topológico de datos ofrece un enfoque innovador y poderoso para abordar problemas complejos en diversos campos. Su capacidad para capturar patrones y aislar valores atípicos en datos multidimensionales lo convierte en una herramienta valiosa para la investigación y la aplicación práctica en áreas tan diversas como la neurociencia, las finanzas y la epidemiología.
+
+   % ---
+\section{Caso de Estudio: Detección de Arritmias con TDA}
+ \label{sec:caso_estudio}
+
+ En esta sección presentamos un ejemplo práctico de cómo el Análisis Topológico de Datos (TDA) puede aplicarse a un problema real: la clasificación de arritmias cardíacas a partir de señales ECG. El enfoque está inspirado en \cite{Dindin2019TDAArrhythmia}, utilizando datos abiertos del repositorio MIT-BIH \citep{Goldberger2000PhysioNet}.
+
+ \subsection{Configuración del Problema}
+
+   El objetivo es distinguir entre dos tipos de registros:
+
+   \begin{itemize}
+     \item \textbf{MIT-BIH Normal Sinus Rhythm Database:} señales ECG de sujetos sanos con ritmo sinusal.
+     \item \textbf{MIT-BIH Arrhythmia Database:} registros ECG con distintos tipos de arritmias y anotaciones clínicas expertas.
+   \end{itemize}
+
+   Cada registro es una serie temporal unidimensional que representa el potencial eléctrico medido sobre el corazón. Debido al ruido fisiológico, variabilidad interpaciente y diferencias morfológicas en la onda PQRST, la separación visual directa entre ambos tipos es limitada.
+
+ \subsection{Motivación para usar TDA}
+
+   Un ECG normal presenta una propiedad fundamental: la periodicidad. El latido cardíaco genera ciclos regulares y repetitivos, que inducen una dinámica estable en el tiempo. Por el contrario, las señales arrítmicas rompen dicha regularidad, alterando los intervalos RR, la morfología del complejo QRS o la presencia de latidos ectópicos.
+
+   Estas diferencias no son evidentes analizando únicamente la señal en el dominio temporal. Sin embargo, cuando se proyecta la serie en un espacio de mayores dimensiones, su estructura geométrica revela patrones topológicos que el TDA puede capturar:
+
+   \begin{itemize}
+     \item Presencia de ciclos recurrentes asociados a la periodicidad.
+     \item Alteraciones topológicas generadas por irregularidad o ruido.
+     \item Comparación robusta entre señales mediante invariantes topológicos.
+   \end{itemize}
+
+   \begin{figure}[H]
+     \centering
+     \includegraphics[width=0.47\textwidth]{figures/normal_timeseries.png}
+     \includegraphics[width=0.47\textwidth]{figures/arritmico_timeseries.png}
+     \captionsetup{justification=centering}
+     \caption{Comparación de las señales ECG de un paciente normal y otro con arritmia.}
+     \label{fig:ecg_time_series}
+   \end{figure}
+
+
+ \subsection{Metodología}
+
+   El análisis realizado se compone de cuatro etapas principales:
+
+   \begin{enumerate}
+     \item \textbf{Embeddings mediante ventana deslizante.} Cada señal se transforma mediante un retraso temporal:
+           \[
+             e(t) = (x_t,\ x_{t+\tau},\dots,x_{t+(d-1)\tau}),
+           \]
+           donde se fija una dimensión $d=30$ y un desfase $\tau=1$. Cada ventana genera un punto en $\mathbb{R}^{d}$, formando una nube de puntos que captura la dinámica del ECG. En señales normales, esta nube tiende a organizarse en torno a una órbita cerrada, mientras que en señales arrítmicas aparecen deformaciones y estructuras fragmentadas.
+
+     \item \textbf{Construcción del complejo de Vietoris–Rips.} A partir de la nube de puntos se construye un complejo simplicial filtrado en función de un umbral $r$ de distancia. A medida que $r$ aumenta, los puntos se conectan, aparecen agrupaciones y se forman ciclos.
+
+     \item \textbf{Cálculo de homología persistente.} El análisis del complejo filtrado permite obtener los diagramas de persistencia. Las clases en $H_{0}$ reflejan componentes conexas de los datos, mientras que las clases en $H_{1}$ capturan ciclos. En señales normales se observa un ciclo dominante con alta persistencia, asociado a la periodicidad. En señales arrítmicas aparecen ciclos menos persistentes, reflejo de la ruptura de la regularidad.
+
+           \begin{figure}[H]
+             \centering
+             \includegraphics[width=0.8\textwidth]{figures/normal_persistence.png}
+             \captionsetup{justification=centering}
+             \caption{Homología persistente de un ECG normal, mostrando un ciclo claro en su correspondiente diagrama de persistencia H1.} \label{fig:ecg_pca_persistence_normal}
+           \end{figure}
+           \begin{figure}[H]
+             \centering
+             \includegraphics[width=0.8\textwidth]{figures/arritmico_persistence.png}
+             \captionsetup{justification=centering}
+             \caption{Homología persistente de un ECG arrítmico, donde no se aprecian ciclos persistentes en el diagrama de H1.} \label{fig:ecg_pca_persistence_arrhythmia}
+           \end{figure}
+
+
+     \item \textbf{Reducción dimensional para visualización.} Para interpretar la geometría de la nube de datos en $\mathbb{R}^{d}$ se aplica \textit{Principal Component Analysis} (PCA). En el caso normal la proyección muestra un bucle bien definido (se proyecta una circunferencia), mientras que la señal arrítmica produce trayectorias dispersas o múltiples bucles irregulares.
+
+           \begin{figure}[H]
+             \centering
+             \includegraphics[width=0.47\textwidth]{figures/normal_embedding.png}
+             \includegraphics[width=0.47\textwidth]{figures/arritmico_embedding.png}
+             \captionsetup{justification=centering}
+             \caption{Proyección PCA de los embeddings: patrón circular para señal normal (izquierda) frente a estructura perturbada para señal arrítmica (derecha).}
+             \label{fig:ecg_pca_embeddings}
+           \end{figure}
+
+   \end{enumerate}
+
+ \subsection{Resultados}
+
+   El análisis topológico revela un contraste claro entre ambos tipos de señales. En los registros de ritmo sinusal, los diagramas de persistencia muestran un ciclo dominante en $H_{1}$ con alta persistencia, correspondiente a una dinámica periódica robusta. Este ciclo aparece de forma temprana en la filtración y perdura durante un amplio rango de escalas de conectividad.
+
+   En cambio, en registros arrítmicos las clases en $H_{1}$ surgen y desaparecen rápidamente. La ausencia de un ciclo persistente indica que la señal no presenta una órbita recurrente estable en su espacio de fases, sino una dinámica irregular o fragmentada. En términos fisiológicos, esta interpretación coincide con la pérdida de regularidad en los intervalos cardiacos y la aparición de latidos ectópicos.
+
+ \subsection{Perspectivas de Clasificación}
+
+   Los invariantes topológicos obtenidos del análisis (diagramas de persistencia, paisajes de persistencia o curvas de Betti) constituyen descriptores robustos para tareas de \textit{machine learning}. A diferencia de la señal cruda, estos invariantes capturan información estructural global y resistente al ruido.
+
+   Gracias al uso de TDA, se pueden emplear distintas estrategias, como transformaciones vectoriales de persistencia para alimentar clasificadores tradicionales o redes neuronales que operen directamente sobre representaciones topológicas.
+
+   Sin duda, la utilización de este tipo de técnicas para guiar gemétricamente la reducción de dimensionalidad es vital en la aproximación al problema, especialmente cuando se usan soluciones de Deep Learning. En todos los casos, este enfoque permite una clasificación más precisa y eficiente, reduciendo la dependencia de características locales y ofreciendo una interpretación geométrica de la señal.
+
+   \bibliography{citations}
+
+\end{document}

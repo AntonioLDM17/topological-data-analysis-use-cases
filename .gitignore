@@ -1,2 +1,12 @@
 .venv
 null
+
+report/*
+!report/main.tex
+!report/figures/
+!report/figures/*
+
+presentation/*
+!presentation/main.tex
+!presentation/figures/
+!presentation/figures/*
