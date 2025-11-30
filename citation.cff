@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use this repository, please cite it as below."
+title: "Topological Data Analysis: Use Cases and Applications"
+version: "1.0.0"
+date-released: "2025-11-30"
+
+authors:
+  - given-names: "Pablo García Molina, Antonio Lorenzo Díaz-Meco, Andrés Martínez Fuentes, Miguel Montes Lorenzo, Javier Ríos Montes"
+
+repository-code: "https://github.com/AntonioLDM17/topological-data-analysis-use-cases"
+url: "https://github.com/AntonioLDM17/topological-data-analysis-use-cases"
+
+abstract: >
+  Repository containing examples, notes, and practical applications of
+  Topological Data Analysis (TDA), including persistent homology,
+  Mapper, and domain-specific use cases.
+
+keywords:
+  - topological data analysis
+  - persistent homology
+  - computational topology
+  - applied topology
+  - TDA
+
+license: "MIT"
