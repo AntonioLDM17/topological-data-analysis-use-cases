@@ -1,0 +1,395 @@
+\documentclass[11pt,aspectratio=169]{beamer}
+
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+\usetheme{Madrid}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+\usefonttheme{professionalfonts}
+
+\title{Aplicaciones del Análisis Topológico de Datos (TDA)}
+\subtitle{Resumen del informe}
+\author{
+  Pablo García Molina \and
+  Antonio Lorenzo Díaz-Meco \and \\
+  Andrés Martínez Fuentes \and
+  Miguel Montes Lorenzo \and \\
+  Francisco Javier Ríos Montes
+}
+\date{2025}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+% -----------------------------------------------------------
+% INTRODUCCIÓN
+% -----------------------------------------------------------
+
+\begin{frame}{Introducción: Complejos simpliciales}
+
+  Los complejos simpliciales aproximan un espacio usando puntos, aristas, triángulos
+  y sus generalizaciones (símplejos de dimensión $k$).
+  \bigskip
+
+  Complejos relevantes:
+  \begin{itemize}
+    \item Complejo de Vietoris-Rips: incluye un símplex si todas las distancias por pares
+          son menores o iguales que $\delta$.
+    \item Complejo de Čech: incluye un símplex si las bolas centradas en sus vértices
+          tienen intersección común.
+  \end{itemize}
+
+  \vfill
+
+  \begin{center}
+    \begin{columns}[c]
+
+      \begin{column}{0.48\textwidth}
+        \begin{center}
+          \includegraphics[width=0.4\linewidth]{figures/Vietoris-Rips-example}
+          \par\smallskip
+          {\footnotesize Complejo de Vietoris-Rips}
+        \end{center}
+      \end{column}
+
+      \begin{column}{0.48\textwidth}
+        \begin{center}
+          \includegraphics[width=0.6\linewidth]{figures/Cech-example}
+          \par\smallskip
+          {\footnotesize Complejo de Čech}
+        \end{center}
+      \end{column}
+
+    \end{columns}
+  \end{center}
+
+\end{frame}
+
+
+\begin{frame}{Introducción: Homología persistente (intuición)}
+  \begin{columns}[T]  % [T] alinea ambas columnas arriba (más limpio en presentaciones)
+
+    %----------------------%
+    % COLUMNA IZQUIERDA   %
+    %----------------------%
+    \begin{column}{0.48\textwidth}
+      La homología persistente estudia cómo cambian las características topológicas
+      de un conjunto de datos al variar una escala.
+      \bigskip
+
+      Ideas clave:
+      \begin{itemize}
+        \item A cada punto se le asocia una bola de radio $r$.
+        \item Al crecer $r$ aparecen y desaparecen componentes, ciclos y cavidades.
+        \item Cada característica tiene nacimiento y muerte.
+        \item Las características con vida larga representan estructura real.
+      \end{itemize}
+    \end{column}
+
+    %----------------------%
+    % COLUMNA DERECHA     %
+    %----------------------%
+    \begin{column}{0.52\textwidth}
+      \begin{center}
+        \includegraphics[width=\linewidth]{figures/persistent_homology}
+      \end{center}
+    \end{column}
+
+  \end{columns}
+\end{frame}
+
+% -----------------------------------------------------------
+% ECOSISTEMA PYTHON
+% -----------------------------------------------------------
+
+
+\begin{frame}{Ecosistema Python: GUDHI}
+  \begin{itemize}
+    \item Biblioteca más completa para TDA.
+    \item Construye múltiples complejos: Čech, Rips, Alpha, Witness.
+    \item Usa \textit{simplex tree} para eficiencia.
+    \item Incluye cálculo completo de homología persistente y diversas representaciones topológicas para análisis y visualización.
+  \end{itemize}
+  \centering\includegraphics[width=0.50\linewidth]{figures/Witness_complex_representation.png}
+\end{frame}
+
+\begin{frame}{Ecosistema Python: Ripser y Giotto--TDA}
+  \textbf{Ripser}
+  \begin{itemize}
+    \item Ultra-rápido y eficiente en memoria.
+    \item Basado en cohomología persistente.
+    \item Limitado a complejos Vietoris--Rips.
+  \end{itemize}
+  \vspace{0.4cm}
+  \textbf{Giotto--TDA}
+  \begin{itemize}
+    \item Diseñado para machine learning.
+    \item Basado en la cohomología persistente y permite trabajar con grafos, series temporales, nubes de puntos, imágenes ...
+    \item Integración directa con \texttt{scikit-learn}.
+    \item Usa Ripser internamente.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Ecosistema Python: Comparativa}
+  \centering
+  \begin{tabular}{@{}llll@{}}
+    \toprule
+    \textbf{Característica} & \textbf{GUDHI} & \textbf{Ripser} & \textbf{Giotto} \\
+    \midrule
+    Objetivo                & Completo       & Velocidad       & ML              \\
+    Complejos               & Muchos         & Rips            & No expone       \\
+    Velocidad               & Media          & Muy alta        & Alta            \\
+    Control                 & Muy alto       & Bajo            & Medio           \\
+    ML                      & Limitado       & Limitado        & Excelente       \\
+    \bottomrule
+  \end{tabular}
+\end{frame}
+
+% -----------------------------------------------------------
+% APLICACIONES
+% -----------------------------------------------------------
+
+\begin{frame}{Aplicaciones de homología persistente: \\Variedad del artefacto en el espacio de datos}
+
+
+\end{frame}
+
+\begin{frame}{Aplicaciones de homología persistente: neurociencia}
+  \begin{columns}[T]
+
+    %------------------%
+    % COLUMNA IZQUIERDA
+    %------------------%
+    \begin{column}{0.48\textwidth}
+      La homología persistente permite estudiar la organización global de las redes cerebrales.
+
+      \bigskip
+
+      \begin{itemize}
+        \item Se construyen redes a partir de fMRI o EEG.
+        \item Se filtra el grafo variando un umbral de conexión.
+        \item Se comparan patrones topológicos entre sujetos sanos y enfermos.
+      \end{itemize}
+    \end{column}
+
+    %------------------%
+    % COLUMNA DERECHA
+    %------------------%
+    \begin{column}{0.52\textwidth}
+      \begin{center}
+        \includegraphics[width=\linewidth]{figures/brain}
+      \end{center}
+    \end{column}
+
+  \end{columns}
+\end{frame}
+
+
+\begin{frame}{Aplicaciones de homología persistente: finanzas}
+
+  En finanzas, el TDA ayuda a detectar cambios de régimen y burbujas de mercado.
+
+  \bigskip
+
+  \begin{itemize}
+    \item Se usan \emph{embeddings} de retraso para representar la dinámica en $\mathbb{R}^d$.
+    \item La homología persistente identifica ciclos robustos antes de colapsos.
+    \item Cambios en los números de Betti pueden anticipar fases de alta volatilidad.
+  \end{itemize}
+
+  \vfill
+
+  \begin{center}
+    \includegraphics[width=0.9\textwidth]{figures/finance_bubble}
+  \end{center}
+
+\end{frame}
+
+
+\begin{frame}{Aplicaciones de homología persistente: propagación epidémica}
+
+  El TDA captura la evolución espacio-temporal de epidemias como la COVID-19.
+
+  \bigskip
+
+  \begin{itemize}
+    \item Se representan regiones mediante puntos en alta dimensión (posición, tiempo, casos).
+    \item Mapper y homología persistente revelan \emph{hotspots} y trayectorias típicas.
+    \item Permite comparar patrones de propagación entre distintas zonas.
+  \end{itemize}
+
+  \vfill
+
+  \begin{center}
+    \includegraphics[width=0.6\textwidth]{figures/covid}
+  \end{center}
+
+\end{frame}
+
+
+% -----------------------------------------------------------
+% IMPLEMENTACIÓN PROPIA
+% -----------------------------------------------------------
+
+\begin{frame}{Implementación propia: presentación del problema}
+  \textbf{Objetivo:} comparar la estructura topológica del latido cardíaco en:
+  \begin{itemize}
+    \item \textbf{ECG normal} — dataset NSRDB (PhysioNet).
+    \item \textbf{ECG arrítmico} — MIT-BIH Arrhythmia Database.
+  \end{itemize}
+
+  \vspace{0.35cm}
+
+  \textbf{Datos utilizados:}
+  \begin{itemize}
+    \item Segmentos reales de \textbf{30 segundos} por paciente.
+    \item Remuestreo a la misma frecuencia para hacerlos comparables.
+    \item Señales de una sola derivación (canal 0).
+  \end{itemize}
+
+  \vspace{0.3cm}
+  \centering
+  \includegraphics[width=0.45\linewidth]{figures/normal_timeseries.png}
+  \includegraphics[width=0.45\linewidth]{figures/arritmico_timeseries.png}
+\end{frame}
+
+\begin{frame}{Implementación propia: instrumentalización de TDA en ECG}
+  \textbf{Idea clave: el corazón sano es casi periódico.}
+
+  \begin{itemize}
+    \item En el \textbf{ECG normal}, los intervalos R--R son regulares → dinámica estable.
+    \item En el \textbf{ECG arrítmico}, la periodicidad se rompe → dinámica irregular.
+  \end{itemize}
+
+  \vspace{0.25cm}
+
+  \textbf{¿Por qué TDA?}
+  \begin{itemize}
+    \item La periodicidad genera un \textbf{ciclo topológico} robusto en el espacio de estados.
+    \item Las arritmias deforman o destruyen ese ciclo.
+    \item La homología persistente permite medir esta diferencia de forma geométrica.
+  \end{itemize}
+
+  \vspace{0.3cm}
+  \centering
+  \includegraphics[width=0.42\linewidth]{figures/normal_timeseries.png}
+  \includegraphics[width=0.42\linewidth]{figures/arritmico_timeseries.png}
+\end{frame}
+
+\begin{frame}{Implementación propia: metodología (I)}
+  \textbf{1. Embedding mediante ventana deslizante}
+  \[
+    e(t) = (x_t, x_{t+\tau}, \dots, x_{t+(d-1)\tau})
+  \]
+
+  \textbf{2. Construcción del complejo Vietoris-Rips}
+
+  \vspace{0.2cm}
+
+  \begin{itemize}
+    \item Se conecta cada par de puntos cuya distancia es menor que un umbral $r$.
+    \item A medida que $r$ crece, aparecen componentes, ciclos y cavidades.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Implementación propia: metodología (II)}
+  \textbf{3. Cálculo de diagramas de persistencia}
+
+  \vspace{0.3cm}
+  \centering
+  \includegraphics[width=0.55\linewidth]{figures/normal_persistence.png}
+  \includegraphics[width=0.55\linewidth]{figures/arritmico_persistence.png}
+
+\end{frame}
+
+\begin{frame}{Implementación propia: metodología (III)}
+  \textbf{4. PCA sobre el embedding}
+
+  \centering
+  \includegraphics[width=0.45\linewidth]{figures/normal_embedding.png}
+  \includegraphics[width=0.45\linewidth]{figures/arritmico_embedding.png}
+
+
+\end{frame}
+
+
+\begin{frame}{Implementación propia: resultados del análisis}
+
+  \textbf{ECG normal:}
+  \begin{itemize}
+    \item Ciclo altamente persistente en $H_1$.
+    \item Señal periódica y estable.
+  \end{itemize}
+
+  \vspace{0.2cm}
+
+  \textbf{ECG arrítmico:}
+  \begin{itemize}
+    \item Ausencia de ciclos persistentes.
+    \item Geometría irregular $\Rightarrow$ pérdida de periodicidad.
+  \end{itemize}
+
+  \textbf{Interpretación fisiológica:}
+
+  \begin{itemize}
+    \item El ciclo persistente refleja el ritmo cardíaco regular.
+    \item Las arritmias destruyen esta estructura topológica.
+    \item La homología persistente capta robustamente la estabilidad del latido.
+  \end{itemize}
+\end{frame}
+
+\section{Implementación propia: Perspectivas de clasificación}
+
+ \begin{frame}{Perspectivas de clasificación}
+
+   \textbf{Invariantes topológicos como descriptores:}
+
+   \begin{itemize}
+     \item Diagramas de persistencia
+     \item Curvas de Betti
+   \end{itemize}
+
+   \textbf{Ventajas de usar TDA:}
+
+   \begin{itemize}
+     \item Robustos al ruido.
+     \item Capturan geometría global de la señal.
+     \item Reducen la dimensionalidad sin perder estructura.
+   \end{itemize}
+
+   \vspace{0.3cm}
+
+   \centering
+   \textbf{→ El TDA proporciona una guía geométrica esencial para el aprendizaje profundo.}
+
+ \end{frame}
+
+ % -----------------------------------------------------------
+ % CIERRE
+ % -----------------------------------------------------------
+
+ \begin{frame}{Recapitulación final}
+   \textbf{Ideas principales} de la presentación:
+   \begin{itemize}
+     \item El TDA permite encontrar ``agujeros'' en variedades de datos de alta dimensión.
+     \item Al trabajar con datos reales, generalmente no-lineales, ofrece una ventaja comparativa respecto de otros tipos de análisis más básicos.
+     \item En el caso de los ECG:
+           \begin{itemize}
+             \item un ECG normal genera una órbita casi periódica en el espacio de fases,
+                   lo que produce \textbf{un ciclo dominante y muy persistente} en $H_1$;
+             \item un ECG arrítmico rompe esta periodicidad, dando lugar a
+                   \textbf{ciclos cortos y ruidosos} sin una estructura clara.
+           \end{itemize}
+     \item El ecosistema Python cuenta con herramientas (GUDHI, Ripser, Giotto-TDA) que permiten llevar a cabo este tipo de análisis de forma sencilla.
+   \end{itemize}
+ \end{frame}
+
+\end{document}
